@@ -18,7 +18,7 @@
 #define _ALWAYS_INLINE_ __attribute__((always_inline))
 
 
-#define Serial SerialUSB
+//#define Serial SerialUSB
 #define USB_Debug_Initialize(x)	SerialUSB.begin(x)
 #define USB_Debug(x)  SerialUSB.print(x)
 #define USB_Debug_LN(x)  SerialUSB.println(x)
