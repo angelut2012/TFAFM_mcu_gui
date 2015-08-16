@@ -1,0 +1,67 @@
+import "oaidl.idl";
+import "ocidl.idl";
+import "mwcomtypes.idl";
+
+[
+  object,
+  uuid("848F257E-513A-4C86-B9EA-E9FDF6C948ED"),
+  dual,
+  helpstring("IKernel Interface"),
+  pointer_default(unique)
+]
+interface IKernel : IDispatch
+{
+  [propget, id(1), helpstring("property MWFlags")]
+  HRESULT MWFlags([out, retval] IMWFlags** ppvFlags);
+  [propput, id(1), helpstring("property MWFlags")]
+  HRESULT MWFlags([in] IMWFlags* pvFlags);
+
+  [id(2), helpstring("Method AFM_dip_for_show")]
+  HRESULT AFM_dip_for_show([in] long nargout, [in,out] VARIANT* image_show_buffer, 
+                           [in,out] VARIANT* im_buffer, [in] VARIANT im_buffer_in1, [in] 
+                           VARIANT point_now_x, [in] VARIANT point_now_y);
+
+  [id(3), helpstring("Method AFM_dip_show_image")]
+  HRESULT AFM_dip_show_image([in] long nargout, [in,out] VARIANT* out, [in] VARIANT imHL, 
+                             [in] VARIANT imHR, [in] VARIANT imEL, [in] VARIANT imER, 
+                             [in] VARIANT point_now_x, [in] VARIANT point_now_y, [in] 
+                             VARIANT str);
+
+  [id(4), helpstring("Method AFM_dip_show_image_from_txt")]
+  HRESULT AFM_dip_show_image_from_txt();
+
+  [id(5), helpstring("Method AFM_scan_set_ROI")]
+  HRESULT AFM_scan_set_ROI([in] long nargout, [in,out] VARIANT* position, [in] VARIANT 
+                           im_buffer, [in] VARIANT position_in1);
+
+  [id(6), helpstring("Method AFM_show_indent_data")]
+  HRESULT AFM_show_indent_data();
+
+  [id(7), helpstring("Method StringEval")]
+  HRESULT StringEval([in] long nargout, [in,out] VARIANT* out_str, [in,out] VARIANT* 
+                     out_data, [in] VARIANT in_str, [in] VARIANT in_data);
+
+
+  [id(8), helpstring("Method MCRWaitForFigures")]
+  HRESULT MCRWaitForFigures();
+};
+[
+  uuid("E415471C-31D4-46F2-8AB8-59FB64DC480B"),
+  version(1.0),
+  helpstring("MKernel 1.0 Type Library")
+]
+library MKernel
+{
+  importlib("stdole32.tlb");
+  importlib("stdole2.tlb");
+  importlib("mwcomutil.tlb");
+
+  [
+    uuid("273B796E-94D7-44A8-BC0F-068F10E97D75"),
+    helpstring("Kernel Class")
+  ]
+  coclass Kernel
+  {
+    [default] interface IKernel;
+  };
+};

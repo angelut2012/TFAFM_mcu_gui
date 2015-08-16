@@ -1,0 +1,98 @@
+20150815
+engage OK
+PID mZ_Loop_PID(&DInput_01, &DOutput_01, &DSet_01,0.05,0.02,0,false);
+
+20150814 
+rewrite PID, 
+parameter using float(4 bytes) number
+
+20150809
+indentation
+fix bug: % -->MOD_range
+//index=k%mI_MaxStep;
+		
+index=MOD_range(k,mI_MaxStep); //here % operator has problem with int
+
+20150808
+set_output_Position_Value_nm  to  set_output_Position_Value_01
+
+20150627
+slow down approach process to reduce vibration.
+define Z_loop_sensor in main file, comment it in SPI_ADC_DAC.
+
+
+20150624
+a big problem about communication speed is solved
+add in C#
+serialPort_Arduino.DtrEnable = true;// this DtrEnable must be enabled to enable native USB communication on Arduino Due SerialUSB
+use SerialUSB in MCU
+
+
+20150615
+indent:send less data back
+
+
+20150610
+console_ResetScannerModel
+20150609
+indent in mcu, and then send out data contineuously 
+20150608
+indent in for loop in mcu
+
+20150517
+indentation program updata, pdms finished
+20150516
+indentation ready
+20150512
+use native usb to send_system_package16_to_PC
+add inline keyword, this make program larger, but faster to excecute
+use always_inline 
+#define _ALWAYS_INLINE_ __attribute__((always_inline))
+ inline void  console_XYScanReset() _ALWAYS_INLINE_;
+ inline void  console_XYScanReset()
+
+20150511
+use native usb port, serial data speed=1.3125us/byte
+add sopport to ADC_PRC via ADC1=55 port as chip_select
+
+20150430
+use matlab com compolent to show image
+
+piezo feedforward use asysmetric model
+
+20150427
+image OK
+matlab for dip and show, goon
+
+
+20150426
+matlab show OK
+20150423
+gui, set parameter, 
+save image to array.
+
+
+20150422
+afm rtos non timer
+
+
+20150408:
+next rtos, 
+
+C# image store
+
+Zloop PID
+double GetError(){return error;};
+
+
+20150404:
+xy scan ok
+next send image 
+20150402
+approach ok
+z loop ok
+coarse positioner, vs2012
+
+next: xy scan
+20150401:
+approach done simulation, pending for probe test

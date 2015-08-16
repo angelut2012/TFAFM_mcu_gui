@@ -1,0 +1,24 @@
+launch4j - an error occured while starting the application
+
+Another Solution.
+
+Arduino IDE decided to create a nested folder in C:\Users\cwcarver\Documents\Arduino. It created 2410 nested folders within the sub-folder "libraries". This prevented me from launching the Arduino IDE. I tried all of the other solutions provided, from reinstalling Java, reinstalling the IDE (both 1.0.5 to the latest nightly build), turning off Bluetooth, and unplugging my Arduino. Nothing seemed to fix the issue until I found the left over angst of Arduino creating 2410 nested folders. I am assuming Arduino took out it's anger on me for some unknown reason to create a recursive nightmare on my file system.
+
+The problem is Windows cannot delete 2410 nested folders; even the SHIFT-DEL will not work.
+
+There are two solutions; quick temp fix and solution.
+
+Temp Fix:
+Rename the C:\Users\cwcarver\Documents\Arduino folder to something else. I renamed mine to C:\Users\cwcarver\Documents\TOAST. This will allow the Arduino IDE to start normally. 
+
+Solution:
+Like I said, normal delete on Windows will not work. However there is a Windows command that is powerful enough to delete the nested folders; robocopy. Open up Command Prompt and type in these commands. Make sure to change the directories to fit your system. 
+
+cd C:\
+mkdir Toast
+robocopy C:\Toast C:\Users\cwcarver\Documents\Arduino /purge
+rmdir Toast
+
+The third command will take a long, long, so very long time to run. This is because robocopy is traversing all of the directories one by one and printing them to the screen. (For me it felt like 30 mins.) The command replicates the empty directory called Toast over the C:\Users\cwcarver\Documents\Arduino directory. Any differences found will be purged; aka deleted. 
+
+Once the commands are done, I could start my Arduino IDE with no problem.
