@@ -1,0 +1,6 @@
+clear
+load('SG_data.mat')
+y=SG(:,2);
+z=SG(:,3);
+Y=y-z;
+plot()

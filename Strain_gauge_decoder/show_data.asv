@@ -1,0 +1,16 @@
+SG=load('data.txt')
+for k=1:3
+    SG(:,k)=SG(:,k)-SG(end,k);
+end
+sgx=SG(:,1);
+
+sgy=SG(:,2);
+
+sgz=SG(:,3);
+
+
+
+plot(sgx,'r.')
+hold on
+plot(sgy,'g.')
+plot(sgz,'b.')

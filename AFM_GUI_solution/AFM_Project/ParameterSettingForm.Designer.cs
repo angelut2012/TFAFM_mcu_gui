@@ -42,6 +42,9 @@
             this.button_Read_StrainGauge_Once = new System.Windows.Forms.Button();
             this.button_Read_StrainGauge_Continue = new System.Windows.Forms.Button();
             this.trackBar_PositionZ = new System.Windows.Forms.TrackBar();
+            this.button_T_debug = new System.Windows.Forms.Button();
+            this.textBox_T_Test_cycles = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_PositionZ)).BeginInit();
             this.SuspendLayout();
             // 
@@ -172,11 +175,41 @@
             this.trackBar_PositionZ.TabIndex = 13;
             this.trackBar_PositionZ.Scroll += new System.EventHandler(this.trackBar_PositionZ_Scroll);
             // 
+            // button_T_debug
+            // 
+            this.button_T_debug.Location = new System.Drawing.Point(337, 45);
+            this.button_T_debug.Name = "button_T_debug";
+            this.button_T_debug.Size = new System.Drawing.Size(111, 32);
+            this.button_T_debug.TabIndex = 14;
+            this.button_T_debug.Text = "T: set voltage";
+            this.button_T_debug.UseVisualStyleBackColor = true;
+            this.button_T_debug.Click += new System.EventHandler(this.button_T_debug_Click);
+            // 
+            // textBox_T_Test_cycles
+            // 
+            this.textBox_T_Test_cycles.Location = new System.Drawing.Point(478, 52);
+            this.textBox_T_Test_cycles.Name = "textBox_T_Test_cycles";
+            this.textBox_T_Test_cycles.Size = new System.Drawing.Size(57, 20);
+            this.textBox_T_Test_cycles.TabIndex = 15;
+            this.textBox_T_Test_cycles.Text = "0";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(475, 33);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(31, 13);
+            this.label5.TabIndex = 16;
+            this.label5.Text = "times";
+            // 
             // ParameterSettingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1829, 639);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.textBox_T_Test_cycles);
+            this.Controls.Add(this.button_T_debug);
             this.Controls.Add(this.trackBar_PositionZ);
             this.Controls.Add(this.button_Read_StrainGauge_Continue);
             this.Controls.Add(this.button_Read_StrainGauge_Once);
@@ -215,5 +248,8 @@
         private System.Windows.Forms.Button button_Read_StrainGauge_Once;
         private System.Windows.Forms.Button button_Read_StrainGauge_Continue;
         private System.Windows.Forms.TrackBar trackBar_PositionZ;
+        private System.Windows.Forms.Button button_T_debug;
+        private System.Windows.Forms.TextBox textBox_T_Test_cycles;
+        private System.Windows.Forms.Label label5;
     }
 }

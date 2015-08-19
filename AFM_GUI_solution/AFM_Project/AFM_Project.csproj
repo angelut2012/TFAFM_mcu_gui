@@ -198,7 +198,7 @@
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="MKernel">
-      <Guid>{510EAB7E-DAF3-402B-A2E3-6D34CCF4FE6B}</Guid>
+      <Guid>{E415471C-31D4-46F2-8AB8-59FB64DC480B}</Guid>
       <VersionMajor>1</VersionMajor>
       <VersionMinor>0</VersionMinor>
       <Lcid>0</Lcid>

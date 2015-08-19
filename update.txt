@@ -1,3 +1,14 @@
+20150819
+c#   + "\tVadc:" + (v_Adc*5/BIT18MAX).ToString("f4")
+20150818:
+fix bug, vError can be -1:1
+void prepare_image_package_to_PC_sub(int indx,int indy,double vHeight,double vError)
+//	vHeight=0:1, vError=-1:1
+
+20150816
+read_SG_data(&switch_read_SG);
+change  switch_read_SG for 1
+
 20150815
 engage OK
 PID mZ_Loop_PID(&DInput_01, &DOutput_01, &DSet_01,0.05,0.02,0,false);

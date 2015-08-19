@@ -430,7 +430,7 @@ void calculate_scan_parameter()
 	USB_Debug_LN(DSet_01);
 }
 //for akiyama probe  
-PID mZ_Loop_PID(&DInput_01, &DOutput_01, &DSet_01,0.05,0.02,0,false);
+PID mZ_Loop_PID(&DInput_01, &DOutput_01, &DSet_01,0.05,0.02,0,true);//false
 // for madcity lab probe
 //PID mZ_Loop_PID(&DInput_01, &DOutput_01, &DSet_01,0.05,0.02,0, DIRECT);// DIRECT 
 
@@ -1080,7 +1080,7 @@ int command_console(bool echo_b)
 //
 //
 //}
-void read_SG_data(int switch_read_SG)
+void read_SG_data(int* pSwitch_read_SG)
 {
 #define sampling_time_us_read_SG_data (1000000.0/10.0)//max<=24Hz
 	if (PERIOD_CHECK_TIME_US_DUE_READ_SG_DATA(sampling_time_us_read_SG_data)==false) return;
@@ -1113,9 +1113,9 @@ void read_SG_data(int switch_read_SG)
 			byte com[LENGTH_COM_BUFFER_MCU2PC-4]={"SG"};
 			com[2]=9;
 			memcpy(&com[3],&Buffer_SG_data[1],9);
-			if (switch_read_SG>0)
+			if (*pSwitch_read_SG>0)
 				send_system_package16_char_to_PC((char*)com);
-			if (switch_read_SG==1) switch_read_SG=0;// read only once
+			if (*pSwitch_read_SG==1) *pSwitch_read_SG=0;// read only once
 			//for (int k=0;k<LENGTH_I2C_DATA_SG;k++)
 			//{Serial.print(Buffer_SG_data[k],DEC);         // print the character
 			//Serial.print(" ");}
@@ -1406,6 +1406,7 @@ void prepare_image_package_to_PC(int indx,int indy,double vHeight,double vError)
 	prepare_image_package_to_PC_sub(indx,indy,vHeight,vError);
 }
 void prepare_image_package_to_PC_sub(int indx,int indy,double vHeight,double vError)
+//	vHeight=0:1, vError=-1:1
 {
 	Serial_write(COM_HEADER1);
 	Serial_write(COM_HEADER2);
@@ -1423,7 +1424,10 @@ void prepare_image_package_to_PC_sub(int indx,int indy,double vHeight,double vEr
 	convert_uint32_to_byte3(vH24,valueH3b);
 
 	byte valueE3b[SIZE_IMAGE_BUFFER_BIT24]={0};
+	//uint32_t vE24=(uint32_t)(vError*(double)BIT24MAX);
+	vError+=1;// converet -1:1-->0:2, later divide by 2
 	uint32_t vE24=(uint32_t)(vError*(double)BIT24MAX);
+	vE24>>=1;// divide by 2
 	convert_uint32_to_byte3(vE24,valueE3b);
 
 	Serial_write(valueH3b,SIZE_IMAGE_BUFFER_BIT24);
@@ -1778,7 +1782,11 @@ void read_SG_data_temp()
 }
 void loop() 
 {	
-
+	//static int x=0;
+	//if (x++>1000)
+	//{x=0;
+	//prepare_engaged_package_to_PC(10,10,0.021,-0.2612);
+	//}
 	////#define SerialUSB Serial 
 	//	SerialUSB.begin(115200);
 	//	byte in_buf[16]={0};
@@ -1856,7 +1864,7 @@ void loop()
 	delayMicroseconds(10);
 	command_console(false);
 	if (switch_read_SG>0)
-		read_SG_data(switch_read_SG);	// should not call this too frequently. <24Hz;
+		read_SG_data(&switch_read_SG);	// should not call this too frequently. <24Hz;
 
 
 	mCPackageToPC_SystemPackage->rtos_send_image_frame_to_PC();	

@@ -7,6 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
+
+using System.Threading;
+
 namespace NameSpace_AFM_Project
 {
     public partial class ParameterSettingForm : Form
@@ -60,5 +63,18 @@ namespace NameSpace_AFM_Project
             value*=pParent.MAX_RANGE_AXIS_NM[axis];
             textBox_Position_Value.Text = value.ToString();
         }
+
+        private void button_T_debug_Click(object sender, EventArgs e)
+        {
+            int N = Convert.ToInt32(textBox_T_Test_cycles.Text);
+            for (int k = 0; k < N;k++ )
+            {
+                pParent.set_output_DAC_Value_0_5(1, 0);
+                Thread.Sleep(500);
+                pParent.set_output_DAC_Value_0_5(1, 5);
+                Thread.Sleep(500);
+            }
+        }
+
     }
 }

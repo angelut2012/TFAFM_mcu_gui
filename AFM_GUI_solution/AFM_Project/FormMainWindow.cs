@@ -196,7 +196,7 @@ namespace NameSpace_AFM_Project
             {
                 Function_UpdateUI();
 
-                Thread.Sleep(2500);
+                Thread.Sleep(250);
             }
         }
         void LoadAFMParamter()
@@ -340,6 +340,7 @@ namespace NameSpace_AFM_Project
         {
             update_UI_label(Sys_Inf);
             MY_DEBUG(Sys_Inf);
+            Sys_Inf = null;
             if (mSWitchShowImage == true)
                 UpdateImageShow();
 
@@ -500,7 +501,7 @@ namespace NameSpace_AFM_Project
             button_SetParameters.Visible = false;
             MY_DEBUG("set parameters start.");
             //pid
-            set_AFM_parameters('R', ref para_Sensitivity, textBox_Sensitivity, 0.001, 500);
+            set_AFM_parameters('R', ref para_Sensitivity, textBox_Sensitivity, -500, 500);//0.001, 500)
             set_AFM_parameters('P', ref para_Z_PID_P, textBox_Z_PID_P, 0, 100);
             set_AFM_parameters('I', ref para_Z_PID_I, textBox_Z_PID_I, 0, 100);
             set_AFM_parameters('D', ref para_Z_PID_D, textBox_Z_PID_D, 0, 100);
@@ -539,7 +540,8 @@ namespace NameSpace_AFM_Project
             send_DR_Value(0, 1, (byte)Convert.ToDouble(textBox_IC0_R1.Text));
             send_DR_Value(0, 2, (byte)Convert.ToDouble(textBox_IC0_R2.Text));
             send_DR_Value(0, 3, (byte)Convert.ToDouble(textBox_IC0_R3.Text));
-            
+
+            trackBar_R01.Value = Convert.ToInt32(para_IC0_DR[0]);
 
             string t = DateTime.Now.ToString("yyyyMMddHHmmss");
             SaveAFMParaToTextFile(t);
@@ -579,7 +581,8 @@ namespace NameSpace_AFM_Project
         }
         void set_AFM_parameters(char parameter_name, ref double para_store, TextBox T, double low_limit, double up_limit)
         {
-            double value = Math.Abs(Convert.ToDouble(T.Text));
+            double value = //Math.Abs
+                (Convert.ToDouble(T.Text));
             value = Math.Max(value, low_limit);
             value = Math.Min(value, up_limit);
             T.Text = Convert.ToString(value);
@@ -1082,7 +1085,10 @@ namespace NameSpace_AFM_Project
             double v_Adc = convert_byte3_to_uint32(com_buffer, ind + 2 + 4);
             double v_Dac = convert_byte3_to_uint32(com_buffer, ind + 2 + 4 + 3);
             v_feedforward *= MAX_RANGE_Z_NM / BIT32MAX;
-            MY_DEBUG("FF:" + v_feedforward.ToString() + "\tadc:" + v_Adc.ToString() + "\tdac:" + v_Dac.ToString());
+            MY_DEBUG("FF:" + v_feedforward.ToString("f1")
+                + "\tadc:" + v_Adc.ToString()
+                 + "\tVadc:" + (v_Adc*5/BIT18MAX).ToString("f4")
+                + "\tdac:" + v_Dac.ToString());
 
             if (mSwitch_IndentTrue_FinishFalse == true)
             {
@@ -1130,10 +1136,7 @@ namespace NameSpace_AFM_Project
             int indy = (int)convert_byte2_to_int16(com_buffer, ind + 6); //com_buffer[ind + 6] << 8 + com_buffer[ind + 7];
             double vH = convert_byte3_to_uint32(com_buffer, ind + 8);
             double vE = convert_byte3_to_uint32(com_buffer, ind + 8 + 3);
-
-
-            //#define MAX_RANGE_X_NM (22000)
-            //#define MAX_RANGE_Y_NM (21000)
+            vE = vE - BIT24MAX / 2;
             vH = vH / BIT24MAX * MAX_RANGE_Z_NM;
             vE = vE / BIT24MAX * MAX_RANGE_Z_NM;
 
