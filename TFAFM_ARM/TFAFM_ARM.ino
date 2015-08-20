@@ -699,6 +699,7 @@ void process_ScanRealTimeLoop()
 		prepare_image_package_to_PC(indx,indy,z_output_01,mZ_Loop_PID.GetError());
 	else// after engage send out (0,0) point continuously
 		prepare_engaged_package_to_PC(indx,indy,z_output_01,mZ_Loop_PID.GetError());
+	
 	//test prepare_image_package_to_PC(indx,indy,0.5,0.1);
 	fastDigitalWrite(22,false);
 }
@@ -1782,6 +1783,14 @@ void read_SG_data_temp()
 }
 void loop() 
 {	
+	//int x=ADC_read(ADC_PORT_PRC);
+	//MY_Debug_LN(x);
+	////double xx=x/BIT18MAX*3.3;
+	////MY_Debug_LN(xx);
+	//delay(10);
+	//return;
+
+
 	//static int x=0;
 	//if (x++>1000)
 	//{x=0;

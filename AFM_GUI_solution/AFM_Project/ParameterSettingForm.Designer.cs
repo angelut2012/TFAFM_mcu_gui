@@ -45,6 +45,8 @@
             this.button_T_debug = new System.Windows.Forms.Button();
             this.textBox_T_Test_cycles = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
+            this.textBox_T_test_dt = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_PositionZ)).BeginInit();
             this.SuspendLayout();
             // 
@@ -191,7 +193,7 @@
             this.textBox_T_Test_cycles.Name = "textBox_T_Test_cycles";
             this.textBox_T_Test_cycles.Size = new System.Drawing.Size(57, 20);
             this.textBox_T_Test_cycles.TabIndex = 15;
-            this.textBox_T_Test_cycles.Text = "0";
+            this.textBox_T_Test_cycles.Text = "20";
             // 
             // label5
             // 
@@ -202,11 +204,30 @@
             this.label5.TabIndex = 16;
             this.label5.Text = "times";
             // 
+            // textBox_T_test_dt
+            // 
+            this.textBox_T_test_dt.Location = new System.Drawing.Point(564, 52);
+            this.textBox_T_test_dt.Name = "textBox_T_test_dt";
+            this.textBox_T_test_dt.Size = new System.Drawing.Size(57, 20);
+            this.textBox_T_test_dt.TabIndex = 17;
+            this.textBox_T_test_dt.Text = "1000";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(573, 33);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(32, 13);
+            this.label6.TabIndex = 18;
+            this.label6.Text = "dt ms";
+            // 
             // ParameterSettingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1829, 639);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.textBox_T_test_dt);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.textBox_T_Test_cycles);
             this.Controls.Add(this.button_T_debug);
@@ -251,5 +272,7 @@
         private System.Windows.Forms.Button button_T_debug;
         private System.Windows.Forms.TextBox textBox_T_Test_cycles;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox textBox_T_test_dt;
+        private System.Windows.Forms.Label label6;
     }
 }

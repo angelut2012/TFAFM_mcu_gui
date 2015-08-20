@@ -67,13 +67,16 @@ namespace NameSpace_AFM_Project
         private void button_T_debug_Click(object sender, EventArgs e)
         {
             int N = Convert.ToInt32(textBox_T_Test_cycles.Text);
+            int dt = Convert.ToInt32(textBox_T_test_dt.Text);
             for (int k = 0; k < N;k++ )
             {
                 pParent.set_output_DAC_Value_0_5(1, 0);
-                Thread.Sleep(500);
+                Thread.Sleep(dt);
                 pParent.set_output_DAC_Value_0_5(1, 5);
-                Thread.Sleep(500);
+                Thread.Sleep(dt);
             }
+            Thread.Sleep(dt*3);
+            pParent.set_output_DAC_Value_0_5(1, 0);
         }
 
     }

@@ -196,7 +196,7 @@ namespace NameSpace_AFM_Project
             {
                 Function_UpdateUI();
 
-                Thread.Sleep(250);
+                Thread.Sleep(2);
             }
         }
         void LoadAFMParamter()
@@ -338,7 +338,7 @@ namespace NameSpace_AFM_Project
 
         public void Function_UpdateUI()
         {
-            update_UI_label(Sys_Inf);
+            //update_UI_label(Sys_Inf);
             MY_DEBUG(Sys_Inf);
             Sys_Inf = null;
             if (mSWitchShowImage == true)
@@ -583,6 +583,12 @@ namespace NameSpace_AFM_Project
         {
             double value = //Math.Abs
                 (Convert.ToDouble(T.Text));
+            // use max 6 number in decimal part
+            ////const int x = 1000000;
+            ////value *= x;
+            ////value = (Int64)value;
+            ////value = value / x;
+
             value = Math.Max(value, low_limit);
             value = Math.Min(value, up_limit);
             T.Text = Convert.ToString(value);
@@ -1366,6 +1372,7 @@ namespace NameSpace_AFM_Project
 
         private void button_Apporach_Click(object sender, EventArgs e)
         {
+            MY_DEBUG("start approach.");
             AFM_coarse_positioner_SetSpeed(250);
             AFM_coarse_positioner_MoveDistance(2, MAX_RANGE_Z_NM * 1.21);// % for safety reason, first move up 25*1.2 um
             Thread.Sleep(1500);
@@ -1423,6 +1430,7 @@ namespace NameSpace_AFM_Project
 
         private void button_Z_Engage_Click(object sender, EventArgs e)
         {
+            MY_DEBUG("start engage.");
             send_Data_Frame_To_Arduino('C', 'Z', 'E');//AA 55 43 5A 45 00 00 00 55 AA 
             mSwitch_ShowComDdata = false;
         }
@@ -1436,6 +1444,7 @@ namespace NameSpace_AFM_Project
         }
         public void send_Data_Frame_To_Arduino_SetSystemIdle_Multi()
         {
+            MY_DEBUG("reset.");
             mSwitch_ShowComDdata = true;
             for (int k = 0; k < 10; k++)
             { send_Data_Frame_To_Arduino('C', 'Z', 'W'); Thread.Sleep(10); }
