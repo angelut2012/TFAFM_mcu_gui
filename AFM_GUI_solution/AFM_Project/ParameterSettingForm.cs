@@ -68,15 +68,16 @@ namespace NameSpace_AFM_Project
         {
             int N = Convert.ToInt32(textBox_T_Test_cycles.Text);
             int dt = Convert.ToInt32(textBox_T_test_dt.Text);
+            byte axis = Convert.ToByte(textBox_Position_Axis.Text);
             for (int k = 0; k < N;k++ )
             {
-                pParent.set_output_DAC_Value_0_5(1, 0);
+                pParent.set_output_DAC_Value_0_5(axis, 0);
                 Thread.Sleep(dt);
-                pParent.set_output_DAC_Value_0_5(1, 5);
+                pParent.set_output_DAC_Value_0_5(axis, 5);
                 Thread.Sleep(dt);
             }
             Thread.Sleep(dt*3);
-            pParent.set_output_DAC_Value_0_5(1, 0);
+            pParent.set_output_DAC_Value_0_5(axis, 0);
         }
 
     }

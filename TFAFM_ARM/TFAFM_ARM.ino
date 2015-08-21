@@ -1783,11 +1783,19 @@ void read_SG_data_temp()
 }
 void loop() 
 {	
-	//int x=ADC_read(ADC_PORT_PRC);
+	////int x=ADC_read(ADC_PORT_PRC);
+	//int x=ADC_read(ADC_PORT_TUNING_FORK);
+	//DAC_write(PIEZO_T,0);
+	//delay(5);
+	//DAC_write(PIEZO_T,BIT18MAX_HALF);
+	//delay(5);
+	//DAC_write(PIEZO_T,BIT18MAX);
+	//delay(5);
+	//DAC_write(PIEZO_Z,x);
 	//MY_Debug_LN(x);
 	////double xx=x/BIT18MAX*3.3;
 	////MY_Debug_LN(xx);
-	//delay(10);
+	//delay(100);
 	//return;
 
 
