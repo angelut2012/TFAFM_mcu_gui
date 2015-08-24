@@ -32,7 +32,10 @@
 //#define ADC_PORT_ZlOOP_SENSOR ADC_PORT_PRC
 #define ADC_PORT_ZlOOP_SENSOR ADC_PORT_TUNING_FORK
 
-
+//the port use for PIEZO_Z and PIEZO_T(tuning fork)
+byte Z_scanner_port=PIEZO_Z;
+#define PIEZO_T_CenterBit18 (140581.0) //80.441/150*2^18
+#define PIEZO_T_Center01 (PIEZO_T_CenterBit18/BIT18MAX) //80.441/150*2^18
 
 /////////////////////----------------------------------
 // send package16 to PC via RTOS
@@ -661,7 +664,21 @@ void process_ScanRealTimeLoop()
 	//piezo_predict_Position01_To_Voltage_DAC18(PIEZO_Z,(double)V18_Dac[PIEZO_Z]/(double)BIT18MAX);
 	//double z_output_01=Z_position_pm/(double)MAX_RANGE_Z_PM;	
 
+	//// for piezo_z and tuning fork switch
+	//if (Z_scanner_port==PIEZO_Z)
+	//	V18_Dac[PIEZO_Z]=piezo_predict_Position01_To_Voltage_DAC18(PIEZO_Z,z_output_01);
+	//else
+	//{
+	//	V18_Dac[Z_scanner_port]=(z_output_01-PIEZO_T_Center01)*BIT18MAX+PIEZO_T_CenterBit18;
+	//	DAC_write(PIEZO_T,V18_Dac[Z_scanner_port]);
+	//}
+
 	V18_Dac[PIEZO_Z]=piezo_predict_Position01_To_Voltage_DAC18(PIEZO_Z,z_output_01);
+
+	//V18_Dac[Z_scanner_port]=((1-z_output_01)*BIT18MAX)-PIEZO_T_CenterBit18;// reverse
+
+	//V18_Dac[Z_scanner_port]=piezo_predict_Position01_To_Voltage_DAC18(Z_scanner_port,z_output_01);
+	
 	int	xy_state=XYscanning();
 
 	////TICX(2);
@@ -927,6 +944,10 @@ inline void console_WithDrawZScanner_SetSystemIdle()
 	//mTimer_ZLoop.stop();
 	//mTimer_Approach.stop();
 	V18_Adc[ADC_PORT_ZlOOP_SENSOR]=0;
+
+	V18_Dac[PIEZO_T]=PIEZO_T_CenterBit18;
+	DAC_write(PIEZO_T,V18_Dac[PIEZO_T]);
+	console_TF_Scan_Disable();
 	sys_state=SS_Idle;
 }
 void console_StartZScannerEngage()
@@ -975,6 +996,22 @@ void console_GetData(byte* com)
 		console_ReadStrainGaugeData(com[3]);
 }
 inline void console_ReadStrainGaugeData(int value){switch_read_SG=value;}
+void console_TF_Scan_Enable()
+{
+	Z_scanner_port=PIEZO_T;
+	V18_Dac[PIEZO_T]=PIEZO_T_CenterBit18;
+	DAC_write(PIEZO_T,V18_Dac[PIEZO_T]);
+
+	z_output_01=0.5;
+	mZ_Loop_PID.Reset();
+}
+void console_TF_Scan_Disable()
+{
+	Z_scanner_port=PIEZO_Z;
+	//V18_Dac[PIEZO_T]=PIEZO_T_CenterBit18;
+	//DAC_write(PIEZO_T,V18_Dac[PIEZO_T]);
+	//recover PID;
+}
 
 void console_Control(byte* com)
 {
@@ -997,7 +1034,11 @@ void console_Control(byte* com)
 		console_YScan_Enable();
 	if (com[1]=='Y' & com[2]=='D') 
 		console_YScan_Disable();
-
+	// tf scan switch with Z piezo
+	if (com[1]=='T' & com[2]=='E') 
+		console_TF_Scan_Enable();
+	if (com[1]=='T' & com[2]=='D') 
+		console_TF_Scan_Disable();
 	if (com[1]=='S')
 		if(com[2]=='R') console_XYScanReset();
 		else if(com[2]=='S') console_XYScanStart();

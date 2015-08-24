@@ -1690,6 +1690,16 @@ namespace NameSpace_AFM_Project
             send_DR_Value(0, 1, v);
         }
 
+        private void checkBox_T_ScanEnable_CheckedChanged(object sender, EventArgs e)
+        {
+            char ch;
+            if (checkBox_T_ScanEnable.Checked == true)
+                ch = 'E';
+            else
+                ch = 'D';
+            send_Data_Frame_To_Arduino('C', 'T', ch);
+        }
+
     }
 
 

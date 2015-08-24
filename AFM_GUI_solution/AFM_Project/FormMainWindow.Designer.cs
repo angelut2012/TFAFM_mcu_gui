@@ -118,6 +118,7 @@
             this.trackBar_R01 = new System.Windows.Forms.TrackBar();
             this.label23 = new System.Windows.Forms.Label();
             this.checkBox_ForceSetAll = new System.Windows.Forms.CheckBox();
+            this.checkBox_T_ScanEnable = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox6.SuspendLayout();
             this.groupBox7.SuspendLayout();
@@ -231,7 +232,7 @@
             this.textBox_ComPortNO.Name = "textBox_ComPortNO";
             this.textBox_ComPortNO.Size = new System.Drawing.Size(65, 26);
             this.textBox_ComPortNO.TabIndex = 24;
-            this.textBox_ComPortNO.Text = "1";
+            this.textBox_ComPortNO.Text = "16";
             this.toolTip_Help.SetToolTip(this.textBox_ComPortNO, "Enter the step length here.");
             // 
             // button_ConnetComPort
@@ -744,7 +745,7 @@
             this.checkBox_Y_ScanEnable.AutoSize = true;
             this.checkBox_Y_ScanEnable.Checked = true;
             this.checkBox_Y_ScanEnable.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_Y_ScanEnable.Location = new System.Drawing.Point(778, 459);
+            this.checkBox_Y_ScanEnable.Location = new System.Drawing.Point(777, 457);
             this.checkBox_Y_ScanEnable.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.checkBox_Y_ScanEnable.Name = "checkBox_Y_ScanEnable";
             this.checkBox_Y_ScanEnable.Size = new System.Drawing.Size(77, 24);
@@ -1033,6 +1034,18 @@
             this.checkBox_ForceSetAll.Text = "force all";
             this.checkBox_ForceSetAll.UseVisualStyleBackColor = true;
             // 
+            // checkBox_T_ScanEnable
+            // 
+            this.checkBox_T_ScanEnable.AutoSize = true;
+            this.checkBox_T_ScanEnable.Location = new System.Drawing.Point(777, 524);
+            this.checkBox_T_ScanEnable.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.checkBox_T_ScanEnable.Name = "checkBox_T_ScanEnable";
+            this.checkBox_T_ScanEnable.Size = new System.Drawing.Size(85, 24);
+            this.checkBox_T_ScanEnable.TabIndex = 82;
+            this.checkBox_T_ScanEnable.Text = "TF scan";
+            this.checkBox_T_ScanEnable.UseVisualStyleBackColor = true;
+            this.checkBox_T_ScanEnable.CheckedChanged += new System.EventHandler(this.checkBox_T_ScanEnable_CheckedChanged);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -1042,6 +1055,7 @@
             this.BackgroundImage = global::NameSpace_AFM_Project.Properties.Resources.back_ground_blue;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1196, 902);
+            this.Controls.Add(this.checkBox_T_ScanEnable);
             this.Controls.Add(this.checkBox_ForceSetAll);
             this.Controls.Add(this.label23);
             this.Controls.Add(this.trackBar_R01);
@@ -1220,6 +1234,7 @@
         private System.Windows.Forms.TrackBar trackBar_R01;
         private System.Windows.Forms.Label label23;
         private System.Windows.Forms.CheckBox checkBox_ForceSetAll;
+        private System.Windows.Forms.CheckBox checkBox_T_ScanEnable;
     }
 }
 
