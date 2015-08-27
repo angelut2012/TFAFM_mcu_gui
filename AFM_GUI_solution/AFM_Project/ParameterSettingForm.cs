@@ -69,15 +69,49 @@ namespace NameSpace_AFM_Project
             int N = Convert.ToInt32(textBox_T_Test_cycles.Text);
             int dt = Convert.ToInt32(textBox_T_test_dt.Text);
             byte axis = Convert.ToByte(textBox_Position_Axis.Text);
-            for (int k = 0; k < N;k++ )
+            
+            for (int k = -50; k < 50; k++)
             {
-                pParent.set_output_DAC_Value_0_5(axis, 0);
+                pParent.set_output_DAC_Value_0_5(axis, (80.0+k/4.0)*5.0 / 150.0);
                 Thread.Sleep(dt);
-                pParent.set_output_DAC_Value_0_5(axis, 5);
-                Thread.Sleep(dt);
+                pParent.MY_DEBUG("V\t" + (80 + k/4.0).ToString() + "\tP\t" + pParent.Z_position_now.ToString());
+                
             }
-            Thread.Sleep(dt*3);
-            pParent.set_output_DAC_Value_0_5(axis, 0);
+            for (int k = 50; k > -50; k--)
+            {
+                pParent.set_output_DAC_Value_0_5(axis, (80.0+k/4.0)*5.0 / 150.0);
+                Thread.Sleep(dt);
+                pParent.MY_DEBUG("V\t" + (80 + k/4.0).ToString() + "\tP\t" + pParent.Z_position_now.ToString());
+
+            }
+            for (int k = -50; k < 50; k++)
+            {
+                pParent.set_output_DAC_Value_0_5(axis, (80.0+k/4.0)*5.0 / 150.0);
+                Thread.Sleep(dt);
+                pParent.MY_DEBUG("V\t" + (80 + k/4.0).ToString() + "\tP\t" + pParent.Z_position_now.ToString());
+
+            }
+            for (int k = 50; k > -50; k--)
+            {
+                pParent.set_output_DAC_Value_0_5(axis, (80.0+k/4.0)*5.0 / 150.0);
+                Thread.Sleep(dt);
+                pParent.MY_DEBUG("V\t" + (80 + k/4.0).ToString() + "\tP\t" + pParent.Z_position_now.ToString());
+
+            }
+             pParent.set_output_DAC_Value_0_5(axis, (80.0 ) / 150.0 * 5.0);
+            //for (int k = 0; k < N;k++ )
+            //{
+            //    pParent.set_output_DAC_Value_0_5(axis, 80 / 150 * 5);
+            //    Thread.Sleep(dt);
+            //    pParent.set_output_DAC_Value_0_5(axis, 90 / 150 * 5);
+            //    Thread.Sleep(dt);
+            //    pParent.set_output_DAC_Value_0_5(axis, 80 / 150 * 5);
+            //    Thread.Sleep(dt);
+            //    pParent.set_output_DAC_Value_0_5(axis, 70 / 150 * 5);
+            //    Thread.Sleep(dt);
+            //}
+            //Thread.Sleep(dt*3);
+            //pParent.set_output_DAC_Value_0_5(axis, 80/150*5);
         }
 
     }

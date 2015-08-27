@@ -34,7 +34,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
-            this.listBox_Axis = new System.Windows.Forms.ListBox();
+            this.listBox_ScannerAxisZ = new System.Windows.Forms.ListBox();
             this.textBox_IC0_R0 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.timer_CheckCOM = new System.Windows.Forms.Timer(this.components);
@@ -60,6 +60,7 @@
             this.textBox_Sensitivity = new System.Windows.Forms.TextBox();
             this.textBox_SetDeltaVoltage = new System.Windows.Forms.TextBox();
             this.textBox_NumberOfFrameToScan = new System.Windows.Forms.TextBox();
+            this.textBox_TF_DC_Gain = new System.Windows.Forms.TextBox();
             this.label_End = new System.Windows.Forms.Label();
             this.label_Start = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -119,6 +120,7 @@
             this.label23 = new System.Windows.Forms.Label();
             this.checkBox_ForceSetAll = new System.Windows.Forms.CheckBox();
             this.checkBox_T_ScanEnable = new System.Windows.Forms.CheckBox();
+            this.label24 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox6.SuspendLayout();
             this.groupBox7.SuspendLayout();
@@ -129,26 +131,24 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBar_R01)).BeginInit();
             this.SuspendLayout();
             // 
-            // listBox_Axis
+            // listBox_ScannerAxisZ
             // 
-            this.listBox_Axis.BackColor = System.Drawing.SystemColors.Window;
-            this.listBox_Axis.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.listBox_Axis.FormattingEnabled = true;
-            this.listBox_Axis.ItemHeight = 20;
-            this.listBox_Axis.Items.AddRange(new object[] {
-            "X",
-            "Y",
-            "Z",
-            "T",
-            "XY_Plane",
-            "All"});
-            this.listBox_Axis.Location = new System.Drawing.Point(840, 853);
-            this.listBox_Axis.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.listBox_Axis.Name = "listBox_Axis";
-            this.listBox_Axis.Size = new System.Drawing.Size(59, 24);
-            this.listBox_Axis.TabIndex = 1;
-            this.toolTip_Help.SetToolTip(this.listBox_Axis, "Select an axis to operate.");
-            this.listBox_Axis.SelectedIndexChanged += new System.EventHandler(this.listBox_Axis_SelectedIndexChanged);
+            this.listBox_ScannerAxisZ.BackColor = System.Drawing.SystemColors.Window;
+            this.listBox_ScannerAxisZ.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.listBox_ScannerAxisZ.FormattingEnabled = true;
+            this.listBox_ScannerAxisZ.ItemHeight = 20;
+            this.listBox_ScannerAxisZ.Items.AddRange(new object[] {
+            "Zonly",
+            "Z_LPF",
+            "Tonly",
+            "ZT"});
+            this.listBox_ScannerAxisZ.Location = new System.Drawing.Point(623, 449);
+            this.listBox_ScannerAxisZ.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.listBox_ScannerAxisZ.Name = "listBox_ScannerAxisZ";
+            this.listBox_ScannerAxisZ.Size = new System.Drawing.Size(89, 104);
+            this.listBox_ScannerAxisZ.TabIndex = 1;
+            this.toolTip_Help.SetToolTip(this.listBox_ScannerAxisZ, "Select an axis to operate.");
+            this.listBox_ScannerAxisZ.SelectedIndexChanged += new System.EventHandler(this.listBox_Axis_SelectedIndexChanged);
             // 
             // textBox_IC0_R0
             // 
@@ -403,6 +403,16 @@
             this.textBox_NumberOfFrameToScan.TabIndex = 75;
             this.textBox_NumberOfFrameToScan.Text = "1";
             this.toolTip_Help.SetToolTip(this.textBox_NumberOfFrameToScan, "Enter the step length here.");
+            // 
+            // textBox_TF_DC_Gain
+            // 
+            this.textBox_TF_DC_Gain.Location = new System.Drawing.Point(246, 425);
+            this.textBox_TF_DC_Gain.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.textBox_TF_DC_Gain.Name = "textBox_TF_DC_Gain";
+            this.textBox_TF_DC_Gain.Size = new System.Drawing.Size(55, 26);
+            this.textBox_TF_DC_Gain.TabIndex = 84;
+            this.textBox_TF_DC_Gain.Text = "1";
+            this.toolTip_Help.SetToolTip(this.textBox_TF_DC_Gain, "Enter the step length here.");
             // 
             // label_End
             // 
@@ -1037,7 +1047,7 @@
             // checkBox_T_ScanEnable
             // 
             this.checkBox_T_ScanEnable.AutoSize = true;
-            this.checkBox_T_ScanEnable.Location = new System.Drawing.Point(777, 524);
+            this.checkBox_T_ScanEnable.Location = new System.Drawing.Point(777, 518);
             this.checkBox_T_ScanEnable.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.checkBox_T_ScanEnable.Name = "checkBox_T_ScanEnable";
             this.checkBox_T_ScanEnable.Size = new System.Drawing.Size(85, 24);
@@ -1045,6 +1055,17 @@
             this.checkBox_T_ScanEnable.Text = "TF scan";
             this.checkBox_T_ScanEnable.UseVisualStyleBackColor = true;
             this.checkBox_T_ScanEnable.CheckedChanged += new System.EventHandler(this.checkBox_T_ScanEnable_CheckedChanged);
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.BackColor = System.Drawing.Color.Transparent;
+            this.label24.Location = new System.Drawing.Point(231, 389);
+            this.label24.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(89, 20);
+            this.label24.TabIndex = 83;
+            this.label24.Text = "TF DC gain";
             // 
             // MainWindow
             // 
@@ -1055,6 +1076,8 @@
             this.BackgroundImage = global::NameSpace_AFM_Project.Properties.Resources.back_ground_blue;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1196, 902);
+            this.Controls.Add(this.label24);
+            this.Controls.Add(this.textBox_TF_DC_Gain);
             this.Controls.Add(this.checkBox_T_ScanEnable);
             this.Controls.Add(this.checkBox_ForceSetAll);
             this.Controls.Add(this.label23);
@@ -1115,7 +1138,7 @@
             this.Controls.Add(this.textBox_IC0_R2);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.textBox_IC0_R1);
-            this.Controls.Add(this.listBox_Axis);
+            this.Controls.Add(this.listBox_ScannerAxisZ);
             this.Controls.Add(this.groupBox7);
             this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.pictureBox1);
@@ -1150,7 +1173,7 @@
 
         #endregion
 
-        private System.Windows.Forms.ListBox listBox_Axis;
+        private System.Windows.Forms.ListBox listBox_ScannerAxisZ;
         private System.Windows.Forms.TextBox textBox_IC0_R0;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Timer timer_CheckCOM;
@@ -1235,6 +1258,8 @@
         private System.Windows.Forms.Label label23;
         private System.Windows.Forms.CheckBox checkBox_ForceSetAll;
         private System.Windows.Forms.CheckBox checkBox_T_ScanEnable;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.TextBox textBox_TF_DC_Gain;
     }
 }
 

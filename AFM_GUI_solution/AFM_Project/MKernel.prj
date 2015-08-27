@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deployment-project plugin="plugin.deploytool" plugin-version="1.0">
-  <configuration target="target.com.component" target-name="Generic COM Component" name="MKernel" location="F:\Dropbox\TF_AFM_develop\software_TFAFM_Arduino_embeded\AFM_code\AFM_GUI_solution\AFM_Project" file="F:\Dropbox\TF_AFM_develop\software_TFAFM_Arduino_embeded\AFM_code\AFM_GUI_solution\AFM_Project\MKernel.prj" build-checksum="4175111412">
-    <param.project.name>F:\Dropbox\TF_AFM_develop\software_TFAFM_Arduino_embeded\AFM_code\AFM_GUI_solution\AFM_Project\MKernel.prj</param.project.name>
+  <configuration target="target.com.component" target-name="Generic COM Component" name="MKernel" location="F:\Dropbox\TF_AFM_develop\software_TFAFM_Arduino_embeded\TFAFM_mcu_gui\AFM_GUI_solution\AFM_Project" file="F:\Dropbox\TF_AFM_develop\software_TFAFM_Arduino_embeded\TFAFM_mcu_gui\AFM_GUI_solution\AFM_Project\MKernel.prj" build-checksum="3910885767">
+    <param.project.name>F:\Dropbox\TF_AFM_develop\software_TFAFM_Arduino_embeded\TFAFM_mcu_gui\AFM_GUI_solution\AFM_Project\MKernel.prj</param.project.name>
     <param.target.type>Generic COM Component</param.target.type>
     <param.appname>MKernel</param.appname>
     <param.intermediate>${PROJECT_ROOT}\MKernel\src</param.intermediate>
@@ -72,8 +72,8 @@
     <fileset.resources />
     <fileset.package />
     <build-deliverables>
-      <file name="MKernel_1_0.dll" location="${PROJECT_ROOT}\MKernel\distrib" optional="false">F:\Dropbox\TF_AFM_develop\software_TFAFM_Arduino_embeded\AFM_code\AFM_GUI_solution\AFM_Project\MKernel\distrib\MKernel_1_0.dll</file>
-      <file name="readme.txt" location="${PROJECT_ROOT}\MKernel\distrib" optional="true">F:\Dropbox\TF_AFM_develop\software_TFAFM_Arduino_embeded\AFM_code\AFM_GUI_solution\AFM_Project\MKernel\distrib\readme.txt</file>
+      <file name="MKernel_1_0.dll" location="${PROJECT_ROOT}\MKernel\distrib" optional="false">F:\Dropbox\TF_AFM_develop\software_TFAFM_Arduino_embeded\TFAFM_mcu_gui\AFM_GUI_solution\AFM_Project\MKernel\distrib\MKernel_1_0.dll</file>
+      <file name="readme.txt" location="${PROJECT_ROOT}\MKernel\distrib" optional="true">F:\Dropbox\TF_AFM_develop\software_TFAFM_Arduino_embeded\TFAFM_mcu_gui\AFM_GUI_solution\AFM_Project\MKernel\distrib\readme.txt</file>
     </build-deliverables>
     <workflow />
     <matlab>
@@ -82,6 +82,7 @@
         <toolbox name="fixedpoint" />
       </toolboxes>
       <path>
+        <directory>${PROJECT_ROOT}\..\bin</directory>
         <directory>C:\Users\AFM\Documents\MATLAB</directory>
         <directory>D:\Program Files\MATLAB\user_lib</directory>
         <directory>D:\Program Files\MATLAB\user_lib\post_process</directory>

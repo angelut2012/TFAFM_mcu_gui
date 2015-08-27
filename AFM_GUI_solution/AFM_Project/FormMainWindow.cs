@@ -60,7 +60,6 @@ namespace NameSpace_AFM_Project
 
         // variable
         //  public Manipulator //mManipulator=new Manipulator();
-        int axis = 0;
         Thread mThread_ResteHome;
 
         public delegate void DelegateFunction();
@@ -109,10 +108,11 @@ namespace NameSpace_AFM_Project
         double para_Z_PID_D = 0;
         double[] para_IC0_DR = { 128, 128, 128, 128, 0, 0 };//R0~R3,DO1,DO2, counted as only four
         double para_NumberOfFrameToScan = 1;
+        double para_TF_DC_Gain = 1;
 
         double para_NumberOfFrameFinished = 0;
 
-        const int NumberOfParameters = 19;
+        const int NumberOfParameters = 20;
         public CParameter mCParameter = new CParameter();
         Form_Indentation mForm_Indentation;// = new Form_Indentation(this);
         /// <summary>
@@ -149,6 +149,8 @@ namespace NameSpace_AFM_Project
         bool mSwitch_ShowComDdata = true;
 
 
+        public double Z_position_now = 0;
+
         public MainWindow()
         {
             //TIC();
@@ -174,7 +176,7 @@ namespace NameSpace_AFM_Project
             mThread_SaveImage = new Thread(ThreadFunction_SaveImage);
 
             SetStyle(ControlStyles.SupportsTransparentBackColor, true);
-            listBox_Axis.SetSelected(0, true);
+            listBox_ScannerAxisZ.SetSelected(0, true);
 
             mDelegateFunction = new DelegateFunction(Function_UpdateUI);
 
@@ -195,8 +197,12 @@ namespace NameSpace_AFM_Project
             while (mThread_UI_Update_running == true)
             {
                 Function_UpdateUI();
-
-                Thread.Sleep(2);
+                for (int k = 0; k < 100; k++)
+                {
+                    MY_DEBUG(Sys_Inf);
+                    Sys_Inf = null;
+                    Thread.Sleep(5);
+                }
             }
         }
         void LoadAFMParamter()
@@ -230,6 +236,9 @@ namespace NameSpace_AFM_Project
                 para_Z_PID_I = out_data[k++, 1];//0;
                 para_Z_PID_D = out_data[k++, 1];//0;
                 para_NumberOfFrameToScan = out_data[k++, 1];
+                para_TF_DC_Gain = out_data[k++, 1];
+
+                // ADD MORE HERE
                 para_IC0_DR[0] = out_data[k++, 1];
                 para_IC0_DR[1] = out_data[k++, 1];
                 para_IC0_DR[2] = out_data[k++, 1];
@@ -249,6 +258,9 @@ namespace NameSpace_AFM_Project
                 UpdateGUITextBox_Invoke(ref para_Sensitivity, textBox_Sensitivity);//, 0.01, 500);
                 UpdateGUITextBox_Invoke(ref para_SetDeltaVoltage_mV, textBox_SetDeltaVoltage);//, 1);//, 1000);
                 UpdateGUITextBox_Invoke(ref para_NumberOfFrameToScan, textBox_NumberOfFrameToScan);//, 1, 2000);
+                UpdateGUITextBox_Invoke(ref para_TF_DC_Gain, textBox_TF_DC_Gain);//, 1, 2000);
+
+
                 UpdateGUITextBox_Invoke(ref para_IC0_DR[0], textBox_IC0_R0);
                 UpdateGUITextBox_Invoke(ref para_IC0_DR[1], textBox_IC0_R1);
                 UpdateGUITextBox_Invoke(ref para_IC0_DR[2], textBox_IC0_R2);
@@ -338,9 +350,8 @@ namespace NameSpace_AFM_Project
 
         public void Function_UpdateUI()
         {
-            //update_UI_label(Sys_Inf);
-            MY_DEBUG(Sys_Inf);
-            Sys_Inf = null;
+            if (Sys_Inf!=null)
+                update_UI_label(Sys_Inf);
             if (mSWitchShowImage == true)
                 UpdateImageShow();
 
@@ -351,22 +362,10 @@ namespace NameSpace_AFM_Project
             // get selected axis number
             //X,Y,Z,T,XY_Plane,All
             int k = 0;
-            for (k = 0; k < listBox_Axis.Items.Count; k++)
-                if (listBox_Axis.GetSelected(k))
-                    axis = k;
-
-            //if (listBox_Axis.GetSelected(0))
-            //    axis = (sbyte)'x';
-            //if (listBox_Axis.GetSelected(1))
-            //    axis = (sbyte)'y';
-            //if (listBox_Axis.GetSelected(2))
-            //    axis = (sbyte)'z';
-            //if (listBox_Axis.GetSelected(3))
-            //    axis = (sbyte)'t';
-            //if (listBox_Axis.GetSelected(4))
-            //    axis = (sbyte)'p';
-            //if (listBox_Axis.GetSelected(5))
-            //    axis = (sbyte)'A';
+            for (k = 0; k < listBox_ScannerAxisZ.Items.Count; k++)
+                if (listBox_ScannerAxisZ.GetSelected(k))
+                    break;
+            set_AFM_parameters('a', k);
         }
         private void button_Stop_Click(object sender, EventArgs e)
         {
@@ -497,6 +496,8 @@ namespace NameSpace_AFM_Project
         { button_SetParameters_Click_function(); }
         void button_SetParameters_Click_function()
         {
+            if (button_SetParameters.Enabled == false)
+                return;
             button_SetParameters.Enabled = false;
             button_SetParameters.Visible = false;
             MY_DEBUG("set parameters start.");
@@ -531,6 +532,7 @@ namespace NameSpace_AFM_Project
             set_AFM_parameters('W', ref para_SetDeltaVoltage_mV, textBox_SetDeltaVoltage, 1, 1000);
             set_AFM_parameters('N', ref para_NumberOfFrameToScan, textBox_NumberOfFrameToScan, 1, 2000);
 
+            set_AFM_parameters('t', ref para_TF_DC_Gain, textBox_TF_DC_Gain, -5000, 5000);
             
             
             // set channel5, Dout2 last will cause self-oscillation stop on madcity lab probe
@@ -584,10 +586,10 @@ namespace NameSpace_AFM_Project
             double value = //Math.Abs
                 (Convert.ToDouble(T.Text));
             // use max 6 number in decimal part
-            ////const int x = 1000000;
-            ////value *= x;
-            ////value = (Int64)value;
-            ////value = value / x;
+            const int x = 1000000;
+            value *= x;
+            value = (Int64)value;
+            value = value / x;
 
             value = Math.Max(value, low_limit);
             value = Math.Min(value, up_limit);
@@ -816,9 +818,8 @@ namespace NameSpace_AFM_Project
                 }
             }
             else
-                MessageBox.Show("MCU port is not connected.", "Error"
-                    //,MessageBoxButtons.YesNo
-                                             );
+                MY_DEBUG("MCU port is not connected.");
+                //MessageBox.Show("MCU port is not connected.", "Error");
 
         }
 
@@ -1155,6 +1156,10 @@ namespace NameSpace_AFM_Project
                 + " H:" + String.Format("{0:0.0}", vH)//vH.ToString()//Convert.ToString(vH)
                 + " E:" + String.Format("{0:0.0}", vE)//vE.ToString()//Convert.ToString(vE)
                 );
+
+
+            Z_position_now = vH;
+
             //  if (Math.Abs(Math.Abs(indx) - Math.Abs(xold)) != 1) 
             //MY_DEBUG( Sys_Inf);
             //update_UI_label(inf);
@@ -1586,6 +1591,8 @@ namespace NameSpace_AFM_Project
                     + para_Z_PID_I.ToString() + "\t%Z_PID_I\r\n"
                     + para_Z_PID_D.ToString() + "\t%Z_PID_D\r\n"
                     + para_NumberOfFrameToScan.ToString() + "\t%NumberOfFrameToScan\r\n"
+                    + para_TF_DC_Gain.ToString() + "\t%TF_DC_Gain\r\n"
+
                     ;
             for (int k = 0; k < 4; k++)
                 text += para_IC0_DR[k].ToString() + "\t%para_IC0_DR_" + k.ToString("D") + "\r\n";

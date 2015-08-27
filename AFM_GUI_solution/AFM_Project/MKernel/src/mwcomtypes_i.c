@@ -6,7 +6,7 @@
 
 
  /* File created by MIDL compiler version 8.00.0595 */
-/* at Fri Jun 12 01:13:49 2015
+/* at Thu Aug 27 01:57:10 2015
  */
 /* Compiler settings for mwcomtypes.idl:
     Oicf, W1, Zp8, env=Win64 (32b run), target_arch=IA64 8.00.0595 

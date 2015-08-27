@@ -6,9 +6,9 @@
 
 
  /* File created by MIDL compiler version 8.00.0595 */
-/* at Fri Jun 12 01:13:47 2015
+/* at Thu Aug 27 01:57:07 2015
  */
-/* Compiler settings for F:\Dropbox\TF_AFM_develop\software_TFAFM_Arduino_embeded\AFM_code\AFM_GUI_solution\AFM_Project\MKernel\src\MKernel_idl.idl:
+/* Compiler settings for F:\Dropbox\TF_AFM_develop\software_TFAFM_Arduino_embeded\TFAFM_mcu_gui\AFM_GUI_solution\AFM_Project\MKernel\src\MKernel_idl.idl:
     Oicf, W1, Zp8, env=Win64 (32b run), target_arch=IA64 8.00.0595 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 

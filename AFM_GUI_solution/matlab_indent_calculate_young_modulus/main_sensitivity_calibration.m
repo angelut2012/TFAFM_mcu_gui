@@ -16,16 +16,16 @@ close all
 % para.v_sample=0.138;
 % para.v_tip=0.15;
 % para.E_tip=135;%GPa
-pa='.\sensitivity_calibration_on_StainlessSteel\'
+% pa='.\sensitivity_calibration_on_StainlessSteel\'
 % pa='sensitivity_calibration\'
 % pa='graphite_probe8\'
-% pa='..\bin\'
+pa='..\bin\'
 
-FN=dir([pa 'IndentData*.txt'])
+FN=dir([pa 'IndentData_Sample_20150826235620.txt'])
 % FN=dir('IndentData_KBR*.txt')%2:3%
 
  for n=1:length(FN)
-    n=2
+%     n=2
     fn=[pa FN(n).name]
     fn_store{n}=fn;
 %     fn='sio2\IndentDataSiO2_TriggerForce_nN1500_LoopDelay_uS3000_20150610234532.txt'
@@ -46,7 +46,7 @@ data(nm==0,:)=[];
 % data=data(1:end-1,:);
 
 z_piezo_NM=data(:,1);
-prc_readout=data(:,2);
+prc_readout=-data(:,2);
 
 % prc_readout=prc_readout;%./para.sensitivity_PRC_ReadoutPerNM;
 
@@ -110,6 +110,7 @@ K=K'
 T=T';
 % f=1./T.*1e6;
 celldisp(fn_store)
-mean(K)
+disp('sensitivity ADC18 value / nm')
+disp(mean(K))
 std(K)
 % close all

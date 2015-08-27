@@ -15,6 +15,7 @@
 #include <I2C_DRpot.h>
 #include <console_serial.h>
 #include <piezo_feed_forward.h>
+#include <IIR_filter.h>
 #define _ALWAYS_INLINE_ __attribute__((always_inline))
 
 
@@ -29,11 +30,11 @@
 #define MY_Debug(x) Serial.print(x)
 #define MY_Debug2(x,y) Serial.print(x,y)
 // select z sensor
-//#define ADC_PORT_ZlOOP_SENSOR ADC_PORT_PRC
-#define ADC_PORT_ZlOOP_SENSOR ADC_PORT_TUNING_FORK
+#define ADC_PORT_ZlOOP_SENSOR ADC_PORT_PRC
+//#define ADC_PORT_ZlOOP_SENSOR ADC_PORT_TUNING_FORK
 
 //the port use for PIEZO_Z and PIEZO_T(tuning fork)
-byte Z_scanner_port=PIEZO_Z;
+byte Z_scanner_port=SCANNER_Z_ONLY;
 #define PIEZO_T_CenterBit18 (140581.0) //80.441/150*2^18
 #define PIEZO_T_Center01 (PIEZO_T_CenterBit18/BIT18MAX) //80.441/150*2^18
 
@@ -95,7 +96,7 @@ int N_x =128, N_y = 128;// image size
 int diry_input = 0;
 
 //// Zloop
-#define SamplingTime_us_Zloop   (330)//1000 
+#define SamplingTime_us_Zloop  (400)// (330)//1000 
 #define SamplingFrequency_Zloop  (1000000.0/SamplingTime_us_Zloop)// Hz
 
 
@@ -373,7 +374,7 @@ void process_Indent_First_SendDataThen()
 uint32_t VWset_deltaV_input_mV=500/4;// set working voltage;// receive from rs232
 double TF_Sinsitivity=1;//192/2;// nm/V   // receive from rs232
 int32_t VWset_deltaV_ADC_b18=0;// use in engage//CONV_DELTA_WORKING_VOLTAGE_MV_TO_ADC(VWset_deltaV_input_mV);// update VWset_deltaV_ADC_b18 each time when set VWset_deltaV_input_mV
-
+double mTF_DC_Gain=1;// gain for tf DC actuation
 
 const double TF_SensorRange=1000;// nm, assumed range, or Zmax
 //double pid_input_Gain_adjust=0;//5.0*TF_Sinsitivity/BIT18MAX/TF_SensorRange;
@@ -673,52 +674,85 @@ void process_ScanRealTimeLoop()
 	//	DAC_write(PIEZO_T,V18_Dac[Z_scanner_port]);
 	//}
 
-	V18_Dac[PIEZO_Z]=piezo_predict_Position01_To_Voltage_DAC18(PIEZO_Z,z_output_01);
+	if (Z_scanner_port==SCANNER_Z_ONLY)// Z piezo only with 
+		V18_Dac[PIEZO_Z]=piezo_predict_Position01_To_Voltage_DAC18(PIEZO_Z,z_output_01);
+	else
+		if (Z_scanner_port==SCANNER_Z_LPF)// Z piezo only with LPF
+		{
+			double z_output_01_lpf=IIR_filter_LPF(z_output_01);
+			V18_Dac[PIEZO_Z]=piezo_predict_Position01_To_Voltage_DAC18(PIEZO_Z,z_output_01_lpf);
+		}
+		else
+			if (Z_scanner_port==SCANNER_T_ONLY)// switched
+			{	
+				V18_Dac[PIEZO_T]=(z_output_01*mTF_DC_Gain+PIEZO_T_Center01)*BIT18MAX;
+			}
+			else
+				if (Z_scanner_port==SCANNER_ZT)// switched
+				{
+					double z_output_01_hpf=IIR_filter_HPF(z_output_01);
+					V18_Dac[PIEZO_T]=(z_output_01_hpf*mTF_DC_Gain+PIEZO_T_Center01)*BIT18MAX;
+					V18_Dac[PIEZO_T]=LIMIT_MAX_MIN(V18_Dac[PIEZO_T],1,BIT18MAX);
+					DAC_write(PIEZO_T,V18_Dac[PIEZO_T]);
 
-	//V18_Dac[Z_scanner_port]=((1-z_output_01)*BIT18MAX)-PIEZO_T_CenterBit18;// reverse
+					double z_output_01_lpf=IIR_filter_LPF(z_output_01);
+					V18_Dac[PIEZO_Z]=piezo_predict_Position01_To_Voltage_DAC18(PIEZO_Z,z_output_01_lpf);
+				}
+				//static int c=0;
+				//c=LIMIT_MAX_MIN(c++,100000,0);
 
-	//V18_Dac[Z_scanner_port]=piezo_predict_Position01_To_Voltage_DAC18(Z_scanner_port,z_output_01);
-	
-	int	xy_state=XYscanning();
+				//if (c==0)
+				//	{
+				//		MY_Debug("L: ");
+				//MY_Debug_LN(z_output_01_lpf);
+				//MY_Debug("H: ");
+				//MY_Debug_LN(z_output_01_hpf);
+				//}
 
-	////TICX(2);
-	////store image
-	//int current_image_line=indy;
-	//current_image_line%=SIZE_IMAGE_BUFFER_LINES;
-	////byte f0b1=0;
-	////if (indx>=0) f0b1=0;
-	////if (indx<0)  f0b1=1;
-	//byte valueH3b[SIZE_IMAGE_BUFFER_BIT24]={0};
-	//uint32_t vH24=(uint32_t)(z_output_01*(double)BIT24MAX);
-	//convert_uint32_to_byte3(vH24,valueH3b);
+				//
 
-	//byte valueE3b[SIZE_IMAGE_BUFFER_BIT24]={0};
-	//uint32_t vE24=(uint32_t)(mZ_Loop_PID.GetError()*(double)BIT24MAX);
-	//convert_uint32_to_byte3(vE24,valueE3b);
-	////6 us
-	//for (int k=0;k<SIZE_IMAGE_BUFFER_BIT24;k++)
-	//{
-	//	if (indx>=0) 
-	//	{
-	//		pImageHF[k][current_image_line][abs(indx)]=valueH3b[k];
-	//		pImageEF[k][current_image_line][abs(indx)]=valueE3b[k];
-	//	}
-	//	else
-	//	{
-	//		pImageHB[k][current_image_line][abs(indx)]=valueH3b[k];
-	//		pImageEB[k][current_image_line][abs(indx)]=valueE3b[k];
-	//	}
+				//V18_Dac[Z_scanner_port]=piezo_predict_Position01_To_Voltage_DAC18(Z_scanner_port,z_output_01);
 
-	//}// 7us
-	////TOCX_P(2);
+				int	xy_state=XYscanning();
 
-	if(xy_state==(int)DDS_XY_Scan)
-		prepare_image_package_to_PC(indx,indy,z_output_01,mZ_Loop_PID.GetError());
-	else// after engage send out (0,0) point continuously
-		prepare_engaged_package_to_PC(indx,indy,z_output_01,mZ_Loop_PID.GetError());
-	
-	//test prepare_image_package_to_PC(indx,indy,0.5,0.1);
-	fastDigitalWrite(22,false);
+				////TICX(2);
+				////store image
+				//int current_image_line=indy;
+				//current_image_line%=SIZE_IMAGE_BUFFER_LINES;
+				////byte f0b1=0;
+				////if (indx>=0) f0b1=0;
+				////if (indx<0)  f0b1=1;
+				//byte valueH3b[SIZE_IMAGE_BUFFER_BIT24]={0};
+				//uint32_t vH24=(uint32_t)(z_output_01*(double)BIT24MAX);
+				//convert_uint32_to_byte3(vH24,valueH3b);
+
+				//byte valueE3b[SIZE_IMAGE_BUFFER_BIT24]={0};
+				//uint32_t vE24=(uint32_t)(mZ_Loop_PID.GetError()*(double)BIT24MAX);
+				//convert_uint32_to_byte3(vE24,valueE3b);
+				////6 us
+				//for (int k=0;k<SIZE_IMAGE_BUFFER_BIT24;k++)
+				//{
+				//	if (indx>=0) 
+				//	{
+				//		pImageHF[k][current_image_line][abs(indx)]=valueH3b[k];
+				//		pImageEF[k][current_image_line][abs(indx)]=valueE3b[k];
+				//	}
+				//	else
+				//	{
+				//		pImageHB[k][current_image_line][abs(indx)]=valueH3b[k];
+				//		pImageEB[k][current_image_line][abs(indx)]=valueE3b[k];
+				//	}
+
+				//}// 7us
+				////TOCX_P(2);
+
+				if(xy_state==(int)DDS_XY_Scan)
+					prepare_image_package_to_PC(indx,indy,z_output_01,mZ_Loop_PID.GetError());
+				else// after engage send out (0,0) point continuously
+					prepare_engaged_package_to_PC(indx,indy,z_output_01,mZ_Loop_PID.GetError());
+
+				//test prepare_image_package_to_PC(indx,indy,0.5,0.1);
+				fastDigitalWrite(22,false);
 }
 ///////////////////////////////// console
 byte com_buffer[LENGTH_COM_BUFFER_PC2MCU * 2] = {0};
@@ -778,6 +812,9 @@ byte console_Parameter(byte* com_buffer_frame)
 	if(para=='e') mI_step_size_nm=vf;
 	if(para=='f') mI_LoopDelay_uS=vf;
 	if(para=='g') mI_HalfNumberOfSamplingPoints=vf/2;
+
+	if(para=='t') mTF_DC_Gain=vf;
+	if(para=='a') {Z_scanner_port=vf;console_TF_Scan_Enable();}
 	//Serial.write(&para,1);
 	//Serial.println(v,DEC);
 }
@@ -869,16 +906,16 @@ void console_DAC_output(byte* com_buffer_frame)
 //	}
 //}
 
-int ReadADC_Average(byte port, int N,int delay_time_ms)
+int ReadADC_Average(byte port, int num,int delay_time_ms)
 {
 	double t=0;
-	//int N=30;
-	for (int k=0;k<N;k++)
+	//int num=30;
+	for (int k=0;k<num;k++)
 	{
 		delay(delay_time_ms);
 		t+=(double)ADC_read(port);
 	}
-	return (int)(t/(double)N);
+	return (int)(t/(double)num);
 }
 void console_StartApproach()
 {
@@ -893,7 +930,7 @@ void console_StartApproach()
 	console_ResetScannerModel(PIEZO_Z);
 
 	delayMicroseconds(1000);
-	Vdf_infinite=ReadADC_Average(ADC_PORT_ZlOOP_SENSOR,30,30);
+	Vdf_infinite=ReadADC_Average(ADC_PORT_ZlOOP_SENSOR,30,1);
 
 	//while(1)
 	//{Vdf_infinite=(int)ADC_read(ADC_PORT_ZlOOP_SENSOR);	
@@ -998,7 +1035,7 @@ void console_GetData(byte* com)
 inline void console_ReadStrainGaugeData(int value){switch_read_SG=value;}
 void console_TF_Scan_Enable()
 {
-	Z_scanner_port=PIEZO_T;
+	//Z_scanner_port=PIEZO_T;
 	V18_Dac[PIEZO_T]=PIEZO_T_CenterBit18;
 	DAC_write(PIEZO_T,V18_Dac[PIEZO_T]);
 
@@ -1007,7 +1044,7 @@ void console_TF_Scan_Enable()
 }
 void console_TF_Scan_Disable()
 {
-	Z_scanner_port=PIEZO_Z;
+	Z_scanner_port=SCANNER_Z_ONLY;
 	//V18_Dac[PIEZO_T]=PIEZO_T_CenterBit18;
 	//DAC_write(PIEZO_T,V18_Dac[PIEZO_T]);
 	//recover PID;
@@ -1391,11 +1428,11 @@ void process_Approach()// fine probing + coarse move
 		// done, GUI use step_counter_Approach to adjust coarse position
 		return;
 	}
-	//#if (ADC_PORT_ZlOOP_SENSOR==ADC_PORT_PRC)
-	//	#define TIME_APPROACHING_COARSE_STEP (2)//Second
-	//#else
-#define TIME_APPROACHING_COARSE_STEP (5)//5 Second, tuning fork
-	//#endif
+#if (ADC_PORT_ZlOOP_SENSOR==ADC_PORT_PRC)
+	#define TIME_APPROACHING_COARSE_STEP (2.5)//Second
+#else
+	#define TIME_APPROACHING_COARSE_STEP (5)//5 Second, tuning fork
+#endif
 #define STEP_SIZE_APPROACHING (BIT18MAX/(2.0)/(TIME_APPROACHING_COARSE_STEP*sampling_frequency_of_Approach_Process))
 
 	Z_position_DAC_Approach+=(STEP_SIZE_APPROACHING);
@@ -1448,7 +1485,7 @@ void prepare_image_package_to_PC(int indx,int indy,double vHeight,double vError)
 	prepare_image_package_to_PC_sub(indx,indy,vHeight,vError);
 }
 void prepare_image_package_to_PC_sub(int indx,int indy,double vHeight,double vError)
-//	vHeight=0:1, vError=-1:1
+	//	vHeight=0:1, vError=-1:1
 {
 	Serial_write(COM_HEADER1);
 	Serial_write(COM_HEADER2);
@@ -1768,6 +1805,10 @@ void setup() {
 	console_XYScanReset();
 	analogReadResolution(12);//analogRead(5-6 us)
 	//Keyboard.begin();
+
+	int x=ADC_read(ADC_PORT_PRC);
+	MY_Debug("PRC value: ");
+	MY_Debug_LN(x);
 	MY_Debug_LN("Setup() done.");
 
 }
@@ -1824,7 +1865,16 @@ void read_SG_data_temp()
 }
 void loop() 
 {	
-	////int x=ADC_read(ADC_PORT_PRC);
+	//int x=ADC_read(ADC_PORT_PRC);
+	//MY_Debug_LN(x);
+	//delay(100);
+	//return;
+
+
+
+	//process_ScanRealTimeLoop();
+	//delay(100);
+	//int x=ADC_read(ADC_PORT_PRC);
 	//int x=ADC_read(ADC_PORT_TUNING_FORK);
 	//DAC_write(PIEZO_T,0);
 	//delay(5);
@@ -1833,7 +1883,7 @@ void loop()
 	//DAC_write(PIEZO_T,BIT18MAX);
 	//delay(5);
 	//DAC_write(PIEZO_Z,x);
-	//MY_Debug_LN(x);
+
 	////double xx=x/BIT18MAX*3.3;
 	////MY_Debug_LN(xx);
 	//delay(100);
