@@ -21,10 +21,10 @@ namespace NameSpace_AFM_Project
 
         enum ParaName { Sun, Mon, Tue, Wed, Thu, Fri, Sat };
         // indentation parameters, input from GUI
-        double mI_MaxDepth = 20000;//MAX_RANGE_Z_NM for savety reason only
-        double mI_step_size_nm = 0.25;
+        double mI_MaxDepth = 6000;//MAX_RANGE_Z_NM for savety reason only
+        double mI_step_size_nm = 0.1;
         double mI_StiffnessPRC_nN_per_nm = 40.0;//30~40N/m, 40 nN/nm
-        double mI_PRC_ADCValue_per_nm = 89.602534853964968;//68.2331;//102 86.9;//
+        double mI_PRC_ADCValue_per_nm = 28;//89.602534853964968;//68.2331;//102 86.9;//
 
         double mI_TriggerForce_nN = 1500;//mI_StiffnessPRC_nN_per_nm * 100;// 100nm
         double mI_LoopDelay_uS = mI_LoopDelay_Min_uS;// 

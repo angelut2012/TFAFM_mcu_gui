@@ -1867,7 +1867,7 @@ void loop()
 {	
 	//int x=ADC_read(ADC_PORT_PRC);
 	//MY_Debug_LN(x);
-	//delay(100);
+	//delay(50);
 	//return;
 
 
