@@ -2,8 +2,8 @@ clear
 clc
 close all
 pa='..\bin\'
-
-FN=dir([pa 'IndentData_SiN_no_cover_20150901170105.txt'])
+pa='..\AFM_GUI_solution\bin\'
+FN=dir([pa 'IndentData.txt'])
 for n=1:length(FN)
     %     n=2
     fn=[pa FN(n).name]

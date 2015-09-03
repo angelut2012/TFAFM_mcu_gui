@@ -19,7 +19,7 @@ distance=distance-distance(1);
 % cftool(distance, force)
 %% linearized hertz model
 L_force=force.^(2/3);
-cfL=createFit_line_poly_N(distance, L_force,1,1);
+[cfL,fh]=createFit_line_poly_N(distance, L_force,1,54);
 K=cfL.p1^(3/2);
 %% hertz model
 % cf= createFit_HertzModel(distance, force);
@@ -31,7 +31,7 @@ E_sample=(1-v_sample^2)./(1./Ex-(1-v_tip^2)./E_tip);
 % E_sample=(1-v_sample^2).*Ex;
 % E_out(k)=abs(E_sample)
 
-
+title('fit youngs modulus linear')
 grid on
 legend('experimental data','curve fit')
 % title(title_name,'Interpreter','non')

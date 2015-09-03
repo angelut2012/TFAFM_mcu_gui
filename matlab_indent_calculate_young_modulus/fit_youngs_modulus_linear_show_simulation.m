@@ -7,13 +7,13 @@ E_sample=fit_youngs_modulus_linear(D,F,para,rangeL,rangeH)
 N=1000;
 D_sim=(0:N)./N.*(max(D));
 F_sim=calc_force_distance_curve(D_sim,E_sample,para);
-figure(10)
+figure(55)
 clf
 plot(D,F,'b.-')
 hold on
 plot(D_sim,F_sim,'r-')
 grid on
-legend('experimental data','simulated curve')
+legend('experimental data','simulated curve',2)
 title(title_name,'Interpreter','non')
 xlabel( 'indent depth (nm)' );
 ylabel( 'force (nN)' );

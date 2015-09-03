@@ -48,7 +48,7 @@ int switch_read_SG=-1;// >0: read; ==1, read only once; ==2 continuously read
 //#if (ADC_PORT_ZlOOP_SENSOR==ADC_PORT_PRC)
 //	#define  sampling_period_us_of_Approach_Process (6000.0)
 //#else
-#define  sampling_period_us_of_Approach_Process (2000.0)
+#define  sampling_period_us_of_Approach_Process (250.0)//old=2000.0
 //#endif
 #define  sampling_frequency_of_Approach_Process ( 1000000.0/ sampling_period_us_of_Approach_Process)
 static uint32_t step_counter_Approach=0;
@@ -73,7 +73,7 @@ double   position_feedforward_output_01[4]={0};//
 int Vdf_infinite=BIT18MAX_HALF;
 
 #if (ADC_PORT_ZlOOP_SENSOR==ADC_PORT_PRC)
-double threshold_approach_delta=112*5;// vpp*5 102*4;//87*11;//;3nm112*3;
+double threshold_approach_delta=41.2*13;//7nm  threashold to avoid peak-to-peak noise //112*5;// vpp*5 102*4;//87*11;//;3nm112*3;
 #else
 double threshold_approach_delta=(150.0/ MAX_RANGE_Z_NM*BIT18MAX) ;//1638;//0.025V/4*bit18=5nm;
 #endif
@@ -269,7 +269,9 @@ void process_Indent_First_SendDataThen()
 		V18_Dac[PIEZO_Z]=piezo_predict_Position01_To_Voltage_DAC18
 			(PIEZO_Z,position_feedforward_output_01[PIEZO_Z]);//,&V18_Adc[ADC_PORT_ZlOOP_SENSOR]);// time=80 uS
 		delayMicroseconds(mI_LoopDelay_uS);
-		V18_Adc[ADC_PORT_ZlOOP_SENSOR]=ADC_read(ADC_PORT_ZlOOP_SENSOR);// combined read and write to speed up
+		//V18_Adc[ADC_PORT_ZlOOP_SENSOR]=ADC_read(ADC_PORT_ZlOOP_SENSOR);
+		V18_Adc[ADC_PORT_ZlOOP_SENSOR]=ADC_read_average(ADC_PORT_ZlOOP_SENSOR,20,10);//1.97 kHz
+
 
 		fastDigitalWrite(23,false);
 		// 85 us for DAC and ADC part delay_1us
@@ -422,7 +424,7 @@ void calculate_scan_parameter()
 
 	VWset_deltaV_ADC_b18=(double)(VWset_deltaV_input_mV)/1000.0/VADC_Ref_V*BIT18MAX;
 
-	double VdeltaF_FarAway_01=ReadADC_Average(ADC_PORT_ZlOOP_SENSOR,30,30)/BIT18MAX;
+	double VdeltaF_FarAway_01=ADC_read_average(ADC_PORT_ZlOOP_SENSOR,30,30000)/BIT18MAX;
 	DSet_01=VdeltaF_FarAway_01-(double)(VWset_deltaV_input_mV)/1000.0/VADC_Ref_V;
 	/////////////////////
 	//XL_NM,YL_NM,DX_NM,DY_NM;
@@ -906,16 +908,17 @@ void console_DAC_output(byte* com_buffer_frame)
 //	}
 //}
 
-int ReadADC_Average(byte port, int num,int delay_time_ms)
+int ADC_read_average(byte port, int num,int delay_time_us)
 {
 	double t=0;
 	//int num=30;
 	for (int k=0;k<num;k++)
 	{
-		delay(delay_time_ms);
+		delayMicroseconds(delay_time_us);
 		t+=(double)ADC_read(port);
 	}
-	return (int)(t/(double)num);
+	t/=(double)num;
+	return (int)t;
 }
 void console_StartApproach()
 {
@@ -930,7 +933,7 @@ void console_StartApproach()
 	console_ResetScannerModel(PIEZO_Z);
 
 	delayMicroseconds(1000);
-	Vdf_infinite=ReadADC_Average(ADC_PORT_ZlOOP_SENSOR,30,1);
+	Vdf_infinite=ADC_read_average(ADC_PORT_ZlOOP_SENSOR,30,1000);
 
 	//while(1)
 	//{Vdf_infinite=(int)ADC_read(ADC_PORT_ZlOOP_SENSOR);	
@@ -1429,14 +1432,15 @@ void process_Approach()// fine probing + coarse move
 		return;
 	}
 #if (ADC_PORT_ZlOOP_SENSOR==ADC_PORT_PRC)
-	#define TIME_APPROACHING_COARSE_STEP (2.5)//Second
+	#define TIME_APPROACHING_COARSE_STEP (1)//(2.5)//Second
 #else
 	#define TIME_APPROACHING_COARSE_STEP (5)//5 Second, tuning fork
 #endif
-#define STEP_SIZE_APPROACHING (BIT18MAX/(2.0)/(TIME_APPROACHING_COARSE_STEP*sampling_frequency_of_Approach_Process))
+#define STEP_SIZE_APPROACHING (BIT18MAX_0D9/(TIME_APPROACHING_COARSE_STEP*sampling_frequency_of_Approach_Process))
 
 	Z_position_DAC_Approach+=(STEP_SIZE_APPROACHING);
-	if (Z_position_DAC_Approach>BIT18MAX_HALF)// one big step finished without touch
+//	if (Z_position_DAC_Approach>BIT18MAX_HALF)// one big step finished without touch
+	if (Z_position_DAC_Approach>BIT18MAX_0D9)// one big step finished without touch
 	{
 		// slow return to avoid vibration
 		double z_return=Z_position_DAC_Approach;
@@ -1454,8 +1458,14 @@ void process_Approach()// fine probing + coarse move
 		Z_position_DAC_Approach=0;
 		return;
 	}
+	// generate a vibration to tapping
 	DAC_write(PIEZO_Z,Z_position_DAC_Approach);
-
+	DAC_write(PIEZO_Z,Z_position_DAC_Approach+STEP_SIZE_APPROACHING);
+	DAC_write(PIEZO_Z,Z_position_DAC_Approach);
+	DAC_write(PIEZO_Z,Z_position_DAC_Approach-STEP_SIZE_APPROACHING);
+	DAC_write(PIEZO_Z,Z_position_DAC_Approach);
+	DAC_write(PIEZO_Z,Z_position_DAC_Approach+STEP_SIZE_APPROACHING);
+	DAC_write(PIEZO_Z,Z_position_DAC_Approach);
 	fastDigitalWrite(23,false);
 }
 void prepare_engaged_package_to_PC(int indx,int indy,double vHeight,double vError)

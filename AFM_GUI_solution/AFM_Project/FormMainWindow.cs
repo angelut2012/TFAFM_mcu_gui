@@ -1246,7 +1246,7 @@ namespace NameSpace_AFM_Project
 
                 max_steps = fine_step;
                 AFM_coarse_positioner_SetSpeed(20);//20
-                AFM_coarse_positioner_MoveDistance(2, -MAX_RANGE_Z_NM / 2.0);// % for safety reason, first move up 25*1.2 um
+                AFM_coarse_positioner_MoveDistance(2, -MAX_RANGE_Z_NM * 0.7);// % BIT18MAX_0D9， use 0.7 only for safety
                 Thread.Sleep(1000);
                 //Thread.Sleep(1000);// add wait
                 send_Data_Frame_To_Arduino('C', 'A', 'P');
@@ -1380,7 +1380,7 @@ namespace NameSpace_AFM_Project
             MY_DEBUG("start approach.");
             AFM_coarse_positioner_SetSpeed(250);
             AFM_coarse_positioner_MoveDistance(2, MAX_RANGE_Z_NM * 1.21);// % for safety reason, first move up 25*1.2 um
-            Thread.Sleep(1500);
+            //Thread.Sleep(1500);
             Thread.Sleep(1500);
             AFM_coarse_positioner_SetSpeed(10);
 
